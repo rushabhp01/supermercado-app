@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Producto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            position: relative;
+        }
+        .cart-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: white;
+            color: black;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .cart-dropdown h3 {
+            margin-top: 0;
+        }
+        .cart-dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .cart-dropdown ul li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-dropdown ul li:last-child {
+            border-bottom: none;
+        }
+        .remove-item {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .cart-button {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background-color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            color: #4CAF50;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            display: none;
+        }
+        .checkbox-group input[type="checkbox"] + label {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            background-color: white;
+            color: #4CAF50;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .checkbox-group input[type="checkbox"]:checked + label {
+            background-color: #4CAF50;
+            color: white;
+        }
+        input[type="text"],
+        input[type="date"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .product-card h3 {
+            margin-top: 0;
+        }
+        .product-card p {
+            margin: 5px 0;
+        }
+        .total-price {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Buscar Producto</h1>
+        <button class="cart-button">Cesta</button>
+        <div class="cart-dropdown">
+            <h3>Tu Cesta</h3>
+            <ul id="cart-items"></ul>
+            <div class="total-price">Total: €<span id="total-price">0.00</span></div>
+        </div>
+    </header>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <label for="name">Nombre del Producto:</label>
+            <input type="text" id="productSearch" name="productSearch" placeholder="Buscar producto...">
+            <div id="productList" class="checkbox-group">
+                {% for product in product_keys %}
+                    <input type="checkbox" id="product-{{ forloop.counter }}" name="products" value="{{ product }}">
+                    <label for="product-{{ forloop.counter }}">{{ product }}</label>
+                {% endfor %}
+            </div>
+          
+            <label for="prediction_date">Fecha de Predicción:</label>
+            <input type="text" id="datepicker" name="prediction_date">
+            
+            <button type="submit">Buscar</button>
+        </form>
+        
+        {% if productos %}
+            <div class="results">
+                <h2>Resultados:</h2>
+                {% for p in productos %}
+                    <div class="product-card">
+                        <h3>{{ p.name }}</h3>
+                        <p>Supermercado: <strong>{{ p.supermarket }}</strong></p>
+                        <p>Categoría: <strong>{{ p.category }}</strong></p>
+                        <p>Fecha de Predicción: <strong>{{ p.prediction_date }}</strong></p>
+                        <p>Predicción: <strong>{{ p.prediction }}</strong></p>
+                        <button class="add-to-cart" data-name="{{ p.name }}" data-price="{{ p.prediction }}">Añadir a cesta</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="results">
+                <p>No se encontraron productos con esos criterios.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        $(function() {
+            var availableDates = JSON.parse('{{ prediction_dates|escapejs }}');
+            var cart = [];
+
+            function available(date) {
+                var dmy = $.datepicker.formatDate('yy-mm-dd', date);
+                if ($.inArray(dmy, availableDates) !== -1) {
+                    return [true, "", "Available"];
+                } else {
+                    return [false, "", "unAvailable"];
+                }
+            }
+    
+            function findClosestDate(dates) {
+                var today = new Date();
+                var closestDate = null;
+                var closestDiff = Infinity;
+    
+                for (var i = 0; i < dates.length; i++) {
+                    var date = new Date(dates[i]);
+                    var diff = Math.abs(date - today);
+                    if (diff < closestDiff) {
+                        closestDiff = diff;
+                        closestDate = date;
+                    }
+                }
+                return closestDate;
+            }
+    
+            var closestDate = findClosestDate(availableDates);
+    
+            $("#datepicker").datepicker({
+                beforeShowDay: available,
+                dateFormat: 'yy-mm-dd',
+                defaultDate: closestDate
+            });
+    
+            if (closestDate) {
+                $("#datepicker").datepicker("setDate", closestDate);
+            }
+
+            $("#productSearch").on("input", function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $("#productList input").each(function() {
+                    var label = $(this).next().text().toLowerCase();
+                    if (label.indexOf(searchTerm) !== -1) {
+                        $(this).parent().show();
+                    } else {
+                        $(this).parent().hide();
+                    }
+                });
+            });
+
+            $(".add-to-cart").on("click", function() {
+            var productName = $(this).data("name");
+            var productPrice = parseFloat($(this).data("price"));
+            var roundedPrice = Math.round(productPrice * 100) / 100;
+
+            if (!cart.some(item => item.name === productName)) {
+                cart.push({name: productName, price: roundedPrice});
+                updateCart();
+                toastr.success(productName + " ha sido añadido a la cesta!");
+            } else {
+                toastr.info(productName + " ya está en la cesta.");
+            }
+        });
+
+            $(".cart-button").on("click", function() {
+                $(".cart-dropdown").toggle();
+            });
+
+            function updateCart() {
+                $("#cart-items").empty();
+                var totalPrice = 0;
+                cart.forEach(function(item) {
+                    $("#cart-items").append(
+                        "<li>" + item.name + " - €" + item.price.toFixed(2) + 
+                        " <button class='remove-item' data-name='" + item.name + "'>X</button></li>"
+                    );
+                    totalPrice += item.price;
+                });
+                $("#total-price").text(totalPrice.toFixed(2));
+                $(".remove-item").on("click", function() {
+                    var productName = $(this).data("name");
+                    cart = cart.filter(item => item.name !== productName);
+                    updateCart();
+                });
+            }
+        });
+    </script>
+    
+    <script id="dates-data" type="application/json">
+        {{ prediction_dates|json_script:"dates" }}
+    </script>
+    
+</body>
+</html>

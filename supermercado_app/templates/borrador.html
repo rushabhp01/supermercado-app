@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Producto</title>
+</head>
+<body>
+    <h1>Buscar Producto</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Nombre del Producto:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="prediction_date">Fecha de Predicción:</label>
+        <input type="date" id="prediction_date" name="prediction_date" required>
+
+        <button type="submit">Buscar</button>
+    </form>
+    {% if producto %}
+        <h2>Resultados:</h2>
+        {% for p in producto %}
+            <p>Supermercado: {{ p.supermarket }}</p>
+            <p>Categoría: {{ p.category }}</p>
+            <p>Nombre: {{ p.name }}</p>
+            <p>Fecha de Predicción: {{ p.prediction_date }}</p>
+            <p>Predicción: {{ p.prediction }}</p>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No se encontraron productos con esos criterios.</p>
+    {% endif %}
+</body>
+</html>

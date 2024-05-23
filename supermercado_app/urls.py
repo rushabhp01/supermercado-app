@@ -1,0 +1,1 @@
+from supermercado_app.views import listar_predicciones

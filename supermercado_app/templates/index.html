@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis de Datos del Supermercado</title>
+    <title>Análisis de Datos de Supermercado</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,18 +27,45 @@
             justify-content: center;
             margin-top: 20px;
             gap: 20px;
+            flex-wrap: wrap;
+        }
+        .links2 {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .links2 a {
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .links a {
             text-decoration: none;
             color: white;
             background-color: #007BFF;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .links a:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .links2 a:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
         .container {
             max-width: 800px;
@@ -47,79 +74,21 @@
             background-color: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .cart-button {
-            cursor: pointer;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            color: #4CAF50;
-            font-size: 16px;
-        }
-        .cart-dropdown {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background-color: white;
-            color: black;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            display: none;
-            flex-direction: column;
-            padding: 10px;
-        }
-        .cart-dropdown h3 {
-            margin-top: 0;
-        }
-        .cart-dropdown ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .cart-dropdown ul li {
-            padding: 5px 0;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .cart-dropdown ul li:last-child {
-            border-bottom: none;
-        }
-        .remove-item {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .total-price {
-            font-weight: bold;
-            text-align: right;
-            margin-top: 10px;
-        }
     </style>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <body>
     <header>
-        <h1>Análisis de Datos del Supermercado</h1>
+        <h1>Análisis de Datos de Supermercado</h1>
     </header>
     <div class="links">
         <a href="{% url 'price_distribution' %}">Distribución de Precios</a>
         <a href="{% url 'price_histogram' %}">Histograma de Precios</a>
         <a href="{% url 'products_per_category' %}">Productos por Categoría</a>
-        <a href="{% url 'buscar_producto' %}">Compra</a>
     </div>
-    <div class="container">
-    </div>
+        
     
-
+    <div class="links2">
+        <a href="{% url 'buscar_producto' %}">Predicción y Compra</a>
+    </div>
 </body>
 </html>
